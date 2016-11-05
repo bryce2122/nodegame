@@ -1,0 +1,392 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>Phaser - Making your first game, part 1</title>
+	<script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+var count = 0;
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var cursors;
+var blocks;
+function preload() {
+game.load.image('sky', 'assets/space.jpg');
+game.load.image('ground', 'assets/platform.png')
+game.load.image('star', 'assets/star.png');
+game.load.spritesheet('p', 'assets/p.png', 32, 32);
+game.load.spritesheet('dude', 'assets/dude.png', 32, 48)
+game.load.image('bloq', 'assets/bloq.png')
+}
+
+
+var score = 0;
+ var scoreText;
+function create() {
+    // game.world.setBounds(-1000, -1000, 2000, 2000);
+    game.add.sprite(0,0, 'p');
+   game.world.setBounds(0, 0, 20000, 20000);
+    platforms = game.add.group();
+   platforms.enableBody = true;
+   platforms.physicsBodyType = Phaser.Physics.ARCADE
+   blocks = game.add.group();
+   blocks.enableBody = true;
+   blocks.physicsBodyType = Phaser.Physics.ARCADE
+   game.physics.startSystem(Phaser.Physics.ARCADE);
+   
+   var ground = platforms.create(0, game.world.height - 64, 'ground');
+   var g = platforms.create(1000, game.world.height -200 , 'ground');
+   var m = platforms.create(2000, game.world.height - 300, 'ground');
+   var l = platforms.create(3000, game.world.height - 400, 'ground');
+
+   ground.scale.setTo(8,2);
+   g.scale.setTo(6,4);
+   m.scale.setTo(6,4);
+   l.scale.setTo(6,4);
+
+var x = 4000
+var b = -500
+   for(i = 0; i<30; i++){
+
+
+    var y = platforms.create(x, game.world.height + b , 'ground');
+    y.scale.setTo(6 ,4);
+
+    y.body.immovable = false;
+ 
+    
+   var m = blocks.create(x, game.world.height + b -100 , 'bloq')
+    m.scale.setTo(6 ,4);
+
+    
+ 
+
+    x += 3000;
+    console.log(y);
+    b -= 100;
+   }
+
+
+
+
+
+
+
+
+
+
+   ground.body.immovable = true;
+   g.body.immovable = true;
+   m.body.immovable = true;
+   l.body.immovable = true;
+   var ledge = platforms.create(400, 400, 'ground')
+   ledge.body.immovable = true;
+   ledge = platforms.create(-150,250, 'ground');
+   ledge.body.immovable = true;
+   
+   player = game.add.sprite(32, game.world.height - 150, 'p')
+   
+   enemy = game.add.sprite(50, game.world.height - 250, 'dude')
+   
+   player.scale.setTo(2,2)
+   game.camera.follow(player);
+   game.physics.arcade.enable(player);
+   game.physics.arcade.enable(blocks);
+   game.physics.arcade.enable(enemy);
+   enemy.body.bounce.y = 0.2
+   enemy.body.gravity.y = 300
+   enemy.animations.add('left', [0,1,2])
+   enemy.animations.add('right',[4,5,6])
+   player.body.bounce.y = 0;
+   player.body.gravity.y = 700;
+   player.body.colliderWorldBounds = true;
+   player.animations.add('left', [0,1,2,3], 10, true);
+   player.animations.add('right', [5,6,7,8],10,true);
+   enemy.body.x = 100
+   cursors = game.input.keyboard.createCursorKeys();
+   stars = game.add.group();
+   stars.enableBody = true;
+ blocks.forEach(function(c) {
+  
+  c.body.gravity.y = 3;
+  
+  })
+  
+
+
+
+
+
+
+   for(var i = 0; i < 12; i++)
+   {
+
+    var star = stars.create(i * 70, 0, 'star');
+
+    star.body.gravity.y = 6;
+
+    star.body.bounce.y = 0.7 + Math.random() * 0.2;
+   }
+
+   
+   scoreText = game.add.text(16,16, 'score: 0', {
+    fontSize: '32px', fill: '#000'});
+   
+
+
+}
+
+function update() {
+   
+    
+
+
+
+console.log(count);
+
+
+// if(enemy.body.x >= 400 )
+
+//   {enemy.body.velocity.x =- 200
+    
+if(enemy.body.x >= 490){
+
+  count++;
+}
+
+
+if(enemy.body.x <= 49){
+  count = 0;  
+}
+
+
+console.log(enemy.body.x)
+if(enemy.body.x <= 500 && count == 0)
+
+enemy.body.velocity.x = 400
+
+else {
+
+  enemy.body.velocity.x = - 400
+  console.log(enemy.body.x)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// var blockdown = function() {
+
+// blocks.forEach(function(c) {
+
+//         if(c.body.velocity.y < -5) {
+
+//             c.body.velocity.y = 0
+//         console.log(c.body.y.velocity);
+//         console.log("damn")
+//         }
+
+//        else { c.body.velocity.y -=  5
+
+//         console.log(c.body.velocity.y);
+//         console.log("work")
+// }
+
+// })
+// }
+
+// setInterval(blockdown, 1000)
+
+// }
+
+// var blockup = function() {
+//   blocks.forEach(function(c) {
+  
+//   c.body.velocity.y = -100
+//   setInterval(blockdown, 500)
+//   })
+  
+  
+  
+  // setInterval(blockdown, 1100);
+  // alert("I'm working");
+
+// }
+
+
+// blockup();
+
+
+   game.physics.arcade.collide(blocks, platforms);
+   // game.physics.arcade.collide(blocks, platforms);
+   
+   
+   // blocks.forEach(function(c){
+
+
+
+   //  game.physics.arcade.collide(c, platforms)
+
+
+   // });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   game.physics.arcade.overlap(player, stars, collectStar, null,this);
+ game.physics.arcade.collide(player,platforms);
+ // game.physic.arcade.collide(blocks, player);
+player.body.velocity.x = 0;
+game.physics.arcade.collide(enemy,platforms);
+game.physics.arcade.overlap(player, enemy, destroy, null, this)
+
+enemy.animations.play()
+
+if(cursors.left.isDown)
+{
+    player.body.velocity.x = -500;
+
+    player.animations.play('left');
+}
+
+else if (cursors.right.isDown)
+{
+
+player.body.velocity.x = 500;
+
+player.animations.play('right');
+
+}
+
+
+else {
+
+    player.animations.stop()
+
+    player.frame = 4;
+}
+
+if(cursors.up.isDown && player.body.touching.down && cursors.right.isDown){
+
+    player.body.velocity.x = 1000
+    player.body.velocity.y = -350
+
+}
+
+
+
+if(cursors.up.isDown && player.body.touching.down )
+
+{
+
+    player.body.velocity.y = -450;
+}
+
+
+
+
+
+
+
+} 
+
+
+function collectStar (player, star) {
+
+    star.kill();
+    score += 10;
+    scoreText.text = 'Score: ' + score;
+
+
+}
+var i = 0;
+function destroy(player, enemy){
+ i++;
+ if(i > 5) {
+  enemy.kill();
+
+}
+}
+
+
+
+ 
+     // some code
+
+
+
+
+// function update() {
+
+//     //  Collide the player and the stars with the platforms
+//     game.physics.arcade.collide(player, platforms);
+
+//     //  Reset the players velocity (movement)
+//     player.body.velocity.x = 0;
+
+//     if (cursors.left.isDown)
+//     {
+//         //  Move to the left
+//         player.body.velocity.x = -150;
+
+//         player.animations.play('left');
+//     }
+//     else if (cursors.right.isDown)
+//     {
+//         //  Move to the right
+//         player.body.velocity.x = 150;
+
+//         player.animations.play('right');
+//     }
+//     else
+//     {
+//         //  Stand still
+//         player.animations.stop();
+
+//         player.frame = 4;
+//     }
+    
+//     //  Allow the player to jump if they are touching the ground.
+//     if (cursors.up.isDown && player.body.touching.down)
+//     {
+//         player.body.velocity.y = -350;
+//     }
+
+// }
+
+</script>
+
+</body>
+</html>
