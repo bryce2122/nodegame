@@ -380,8 +380,8 @@ function collectStar (player, star) {
 function killEnemy(bullet, enemy){
 
   enemy.kill();
-  bullet.kill();
-   bullet.reset(player.body.x + 4 , player.body.y);
+  bullet.body.position.y = 1000
+   
 }
 
 
