@@ -33,7 +33,7 @@ this.scale.setScreenSize( true );
 game.load.image('sky', 'assets/space.jpg');
 game.load.image('ground', 'assets/platform.png')
 game.load.image('star', 'assets/star.png');
-game.load.spritesheet('block', 'assets/block.png', 32, 32);
+game.load.spritesheet('thebad', 'assets/thebad.png', 32, 32);
 game.load.spritesheet('dude', 'assets/dude.png', 32, 48)
 game.load.image('bloq', 'assets/bloq.png')
 game.load.spritesheet('bullet', 'assets/bullet.png',32,32)
@@ -72,7 +72,7 @@ function create() {
 
 
 
-    game.add.sprite(0,0, 'block');
+    // game.add.sprite(0,0, 'thebad');
     game.add.sprite
    game.world.setBounds(0, 0, 20000, 20000);
     platforms = game.add.group();
@@ -87,11 +87,12 @@ function create() {
    var g = platforms.create(2000, game.world.height -100 , 'ground');
     m = platforms.create(3000, game.world.height - 64, 'ground');
    var l = platforms.create(4000, game.world.height - 800, 'ground');
-
+   var k = platforms.create(4300, game.world.height - 800, 'ground');
    ground.scale.setTo(2,2);
    g.scale.setTo(2,2);
    m.scale.setTo(2,2);
-   l.scale.setTo(2,2);
+   l.scale.setTo(0.1,1);
+   k.scale.setTo(0.1,1);
 
 var x = 4000
 var b = -500
@@ -128,12 +129,13 @@ var b = -500
    g.body.immovable = true;
    m.body.immovable = true;
    l.body.immovable = true;
+   k.body.immovable = true;
    var ledge = platforms.create(400, 400, 'ground')
    ledge.body.immovable = true;
    ledge = platforms.create(-150,250, 'ground');
    ledge.body.immovable = true;
    
-   player = game.add.sprite(32, game.world.height - 150, 'block')
+   player = game.add.sprite(32, game.world.height - 150, 'thebad')
    
    enemy = game.add.sprite(200, game.world.height - 250, 'dude')
    
@@ -151,10 +153,10 @@ var b = -500
    player.body.gravity.y = 700;
    player.body.colliderWorldBounds = true;
    
-   player.animations.add('left', [2], 10, true);
-   player.animations.add('right', [2],10, true);
-    player.animations.add('r', [2],10, true);
-   
+   player.animations.add('left', [1,2,3,4], 10, true);
+   player.animations.add('right', [6,7,8,9],10, true);
+    
+   player.animations.add('shoot', [10],10,true)
 
    enemy.body.x = 100
    cursors = game.input.keyboard.createCursorKeys();
@@ -210,7 +212,9 @@ bullet2 = game.add.sprite(-100, -100 , 'bullet')
 
 
 function update() {
-  
+  console.log(player.animations.frame)
+  console.log("frame")
+ 
  player.scale.setTo(2,2)
   var random = Math.floor((Math.random() * 100) + 1);
    var code = 7 
@@ -230,10 +234,10 @@ console.log("break")
 
 
   console.log(player.animations.frame) 
- player.animations.frame = 0;
+ // player.animations.frame = 5;
  if (this.spaceKey.isDown)
     {
-        
+        player.animations.play('shoot');
         fire();
         console.log("fire")
 
@@ -399,6 +403,7 @@ enemy.animations.play()
 
 if(cursors.left.isDown)
 {
+    
     player.body.velocity.x = -1500;
 
     player.animations.play('left');
