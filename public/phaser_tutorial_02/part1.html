@@ -14,14 +14,26 @@
 
 <script type="text/javascript">
 var count = 0;
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1400, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 var cursors;
 var blocks;
+var health = 5;
+var m;
 function preload() {
+
+this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+//this.scale.pageAlignHorizontally = true;
+this.scale.pageAlignVertically = true;
+this.scale.setScreenSize( true );
+
+
+
+
+
 game.load.image('sky', 'assets/space.jpg');
 game.load.image('ground', 'assets/platform.png')
 game.load.image('star', 'assets/star.png');
-game.load.spritesheet('thebad', 'assets/thebad.png', 32, 32);
+game.load.spritesheet('block', 'assets/block.png', 32, 32);
 game.load.spritesheet('dude', 'assets/dude.png', 32, 48)
 game.load.image('bloq', 'assets/bloq.png')
 game.load.spritesheet('bullet', 'assets/bullet.png',32,32)
@@ -46,10 +58,21 @@ function create() {
     this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
 
+     game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
+
+
+ 
+
+
+    
 
 
 
-    game.add.sprite(0,0, 'thebad');
+
+
+
+
+    game.add.sprite(0,0, 'block');
     game.add.sprite
    game.world.setBounds(0, 0, 20000, 20000);
     platforms = game.add.group();
@@ -61,36 +84,36 @@ function create() {
    game.physics.startSystem(Phaser.Physics.ARCADE);
    
    var ground = platforms.create(0, game.world.height - 64, 'ground');
-   var g = platforms.create(1000, game.world.height -200 , 'ground');
-   var m = platforms.create(2000, game.world.height - 300, 'ground');
-   var l = platforms.create(3000, game.world.height - 400, 'ground');
+   var g = platforms.create(2000, game.world.height -100 , 'ground');
+    m = platforms.create(3000, game.world.height - 64, 'ground');
+   var l = platforms.create(4000, game.world.height - 800, 'ground');
 
-   ground.scale.setTo(8,2);
-   g.scale.setTo(6,4);
-   m.scale.setTo(6,4);
-   l.scale.setTo(6,4);
+   ground.scale.setTo(2,2);
+   g.scale.setTo(2,2);
+   m.scale.setTo(2,2);
+   l.scale.setTo(2,2);
 
 var x = 4000
 var b = -500
-   for(i = 0; i<30; i++){
+   // for(i = 0; i<30; i++){
 
 
-    var y = platforms.create(x, game.world.height + b , 'ground');
-    y.scale.setTo(6 ,4);
+   //  var y = platforms.create(x, game.world.height + b , 'ground');
+   //  y.scale.setTo(6 ,4);
 
-    y.body.immovable = false;
+   //  y.body.immovable = true;
  
     
-   var m = blocks.create(x, game.world.height + b -100 , 'bloq')
-    m.scale.setTo(6 ,4);
+   // var m = blocks.create(x, game.world.height + b -100 , 'bloq')
+   //  m.scale.setTo(6 ,4);
 
     
  
 
-    x += 3000;
-    console.log(y);
-    b -= 100;
-   }
+   //  x += 3000;
+   //  console.log(y);
+   //  b -= 100;
+   // }
 
 
 
@@ -110,11 +133,12 @@ var b = -500
    ledge = platforms.create(-150,250, 'ground');
    ledge.body.immovable = true;
    
-   player = game.add.sprite(32, game.world.height - 150, 'thebad')
+   player = game.add.sprite(32, game.world.height - 150, 'block')
    
-   enemy = game.add.sprite(50, game.world.height - 250, 'dude')
+   enemy = game.add.sprite(200, game.world.height - 250, 'dude')
    
    player.scale.setTo(2,2)
+   enemy.scale.setTo(3,3)
    game.camera.follow(player);
    game.physics.arcade.enable(player);
    game.physics.arcade.enable(blocks);
@@ -127,8 +151,9 @@ var b = -500
    player.body.gravity.y = 700;
    player.body.colliderWorldBounds = true;
    
-   player.animations.add('left', [0,1,2,3,4], 10, true);
-   player.animations.add('right', [6,7,8,9,10],10, true);
+   player.animations.add('left', [2], 10, true);
+   player.animations.add('right', [2],10, true);
+    player.animations.add('r', [2],10, true);
    
 
    enemy.body.x = 100
@@ -142,13 +167,15 @@ var b = -500
   })
   
 bullet = game.add.sprite(-100, -100 , 'bullet')
-
+bullet2 = game.add.sprite(-100, -100 , 'bullet')
       bullets = game.add.group();
     bullet.enableBody = true;
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
     this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     game.physics.arcade.enable(bullet);
-
+    game.physics.arcade.enable(bullet2)
+    
+    this.sKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN)
 
 
 
@@ -170,8 +197,40 @@ bullet = game.add.sprite(-100, -100 , 'bullet')
 
 }
 
+
+ function updateCounter() {
+    // alert("no")
+
+    
+
+}
+
+
+
+
+
 function update() {
-   
+  
+ player.scale.setTo(2,2)
+  var random = Math.floor((Math.random() * 100) + 1);
+   var code = 7 
+  
+  if(random == code) {
+
+    fire2();
+
+  }
+
+    
+
+
+
+console.log(player.body.x)
+console.log("break")
+
+
+  console.log(player.animations.frame) 
+ player.animations.frame = 0;
  if (this.spaceKey.isDown)
     {
         
@@ -180,12 +239,24 @@ function update() {
 
     }   
 
+if(this.sKey.isDown)
+{
 
+ console.log("s");
 
+player.animations.play('right');
+fire2();
+player.scale.setTo(0.3,1)
 
-player.animations.play();
+}
 
-player.animations.frame = 9
+if(player.body.x > 3035) {
+
+m.body.velocity.y -= 5
+alert("high")
+}
+console.log(m.body.y)
+console.log("high")
 
 console.log(player.animations.frame);
 
@@ -208,11 +279,11 @@ if(enemy.body.x <= 49){
 console.log(enemy.body.x)
 if(enemy.body.x <= 500 && count == 0)
 
-enemy.body.velocity.x = 400
+enemy.body.velocity.x = 100
 
 else {
 
-  enemy.body.velocity.x = - 400
+  enemy.body.velocity.x = - 100
   console.log(enemy.body.x)
 }
 
@@ -317,7 +388,9 @@ else {
  game.physics.arcade.collide(player,platforms);
  // game.physic.arcade.collide(blocks, player);
 
+
 game.physics.arcade.overlap(bullet, enemy, killEnemy, null, this)
+game.physics.arcade.overlap(bullet2, player, killPlayer, null, this)
 player.body.velocity.x = 0;
 game.physics.arcade.collide(enemy,platforms);
 game.physics.arcade.overlap(player, enemy, destroy, null, this)
@@ -336,7 +409,8 @@ else if (cursors.right.isDown)
 
 player.body.velocity.x = 1500;
 
-player.animations.play('right');
+player.animations.play('right')
+
 
 }
 
@@ -345,7 +419,7 @@ else {
 
     player.animations.stop()
 
-    player.frame = 4;
+    
 }
 
 if(cursors.up.isDown && player.body.touching.down && cursors.right.isDown){
@@ -380,12 +454,21 @@ function collectStar (player, star) {
 function killEnemy(bullet, enemy){
 
   enemy.kill();
+  bullet2.kill();
   bullet.body.position.y = 1000
    
 }
 
 
+function killPlayer(bullet, player){
+  health = health - 1;
+    
+  if (health <= 0) {
+  player.kill();
+  bullet2.kill();
+}
 
+}
 
 
 var i = 0;
@@ -405,13 +488,22 @@ function fire() {
     bullet.body.y = player.body.y
     bullet.body.velocity.x += 500;
 }
+function fire2() {
 
+    // var bullet = bullets.getFirstDead();
+    // bullet.reset(player.x - 8, player.y - 8);
+    bullet2.body.x  = enemy.body.x
+    bullet2.body.y = enemy.body.y + 100
+    
+    if(player.body.x < enemy.body.x){
 
+    bullet2.body.velocity.x =- 200;}
 
- 
-     // some code
+    else {
 
-
+      bullet2.body.velocity.x += 100  
+    }
+}
 
 
 // function update() {
