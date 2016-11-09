@@ -14,26 +14,63 @@
 
 <script type="text/javascript">
 var count = 0;
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1400, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 var cursors;
 var blocks;
+var health = 5;
+var m;
+var g;
+var z;
+var turn;
+var jump;
+var pickup;
+var lands;
+var cursors;
+var theme;
+var diamonds;
+var score = 0;
+var scoreText;
+
+
 function preload() {
+
+this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+//this.scale.pageAlignHorizontally = true;
+this.scale.pageAlignVertically = true;
+this.scale.setScreenSize( true );
+
+
+
+
+
 game.load.image('sky', 'assets/space.jpg');
 game.load.image('ground', 'assets/platform.png')
 game.load.image('star', 'assets/star.png');
 game.load.spritesheet('thebad', 'assets/thebad.png', 32, 32);
 game.load.spritesheet('dude', 'assets/dude.png', 32, 48)
+game.load.spritesheet('balloon','assets/balloon.png',32,32)
 game.load.image('bloq', 'assets/bloq.png')
 game.load.spritesheet('bullet', 'assets/bullet.png',32,32)
+game.load.image('background', 'assets/background.png');
+game.load.image('land', 'assets/land.png');
+game.load.image('ground', 'assets/ground.png');
+game.load.image('diamond', 'assets/diamond.png');
+game.load.spritesheet('protagonist', 'assets/protagonist.png', 64, 64);
+game.load.audio('jump', 'assets/jump.mp3');
+game.load.audio('pickup', 'assets/pickup.mp3');
+game.load.audio('theme', 'assets/theme.mp3');
+
+
 }
 
 
 var score = 0;
  var scoreText;
 var bullets;
-
+var enemy1;
 var fireRate = 100;
 var nextFire = 0;
+var lands;
 function create() {
     // game.world.setBounds(-1000, -1000, 2000, 2000);
       
@@ -46,51 +83,172 @@ function create() {
     this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
 
+     // game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
+
+
+ 
+
+
+    
 
 
 
-    game.add.sprite(0,0, 'thebad');
+
+
+
+
+    // game.add.sprite(0,0, 'thebad');
     game.add.sprite
    game.world.setBounds(0, 0, 20000, 20000);
     platforms = game.add.group();
    platforms.enableBody = true;
    platforms.physicsBodyType = Phaser.Physics.ARCADE
+   
+   enemies = game.add.group();
+   enemies.enableBody = true;
+   enemies.physicsBodyType = Phaser.Physics.ARCADE
    blocks = game.add.group();
    blocks.enableBody = true;
    blocks.physicsBodyType = Phaser.Physics.ARCADE
    game.physics.startSystem(Phaser.Physics.ARCADE);
    
    var ground = platforms.create(0, game.world.height - 64, 'ground');
-   var g = platforms.create(1000, game.world.height -200 , 'ground');
-   var m = platforms.create(2000, game.world.height - 300, 'ground');
-   var l = platforms.create(3000, game.world.height - 400, 'ground');
+    g = platforms.create(2000, game.world.height -100 , 'ground');
+    m = platforms.create(3000, game.world.height - 64, 'ground');
+   var l = platforms.create(4000, game.world.height - 800, 'ground');
+   var k = platforms.create(4300, game.world.height - 800, 'ground');
+  
+   ground.scale.setTo(10,2);
+   g.scale.setTo(2,2);
+   m.scale.setTo(2,2);
+   l.scale.setTo(0.1,1);
+   k.scale.setTo(0.1,1);
 
-   ground.scale.setTo(8,2);
-   g.scale.setTo(6,4);
-   m.scale.setTo(6,4);
-   l.scale.setTo(6,4);
+
+  enemy1 = enemies.create(500,game.world.height - 120, 'dude')
+ var enemy2 = enemies.create(600,game.world.height - 120, 'dude')
+ var enemy3 = enemies.create(700,game.world.height - 120, 'dude')
+ var enemy4 = enemies.create(800,game.world.height - 120, 'dude')
+ var enemy5 = enemies.create(900,game.world.height - 120, 'dude')
+ var enemy6 = enemies.create(1000,game.world.height - 120, 'dude')
+ var enemy7 = enemies.create(1100,game.world.height - 120, 'dude')
+ var enemy8 = enemies.create(1200,game.world.height - 120, 'dude')
+ var enemy9 = enemies.create(1300,game.world.height - 120, 'dude')
+ var enemy10 = enemies.create(1400,game.world.height - 120, 'dude')
+
+
+
 
 var x = 4000
 var b = -500
-   for(i = 0; i<30; i++){
+   // for(i = 0; i<30; i++){
 
 
-    var y = platforms.create(x, game.world.height + b , 'ground');
-    y.scale.setTo(6 ,4);
+   //  var y = platforms.create(x, game.world.height + b , 'ground');
+   //  y.scale.setTo(6 ,4);
 
-    y.body.immovable = false;
+   //  y.body.immovable = true;
  
     
-   var m = blocks.create(x, game.world.height + b -100 , 'bloq')
-    m.scale.setTo(6 ,4);
+   // var m = blocks.create(x, game.world.height + b -100 , 'bloq')
+   //  m.scale.setTo(6 ,4);
 
     
  
 
-    x += 3000;
-    console.log(y);
-    b -= 100;
-   }
+   //  x += 3000;
+   //  console.log(y);
+   //  b -= 100;
+   // }
+
+
+      game.add.tileSprite(0, 0, 1920, 1200, 'background');
+    game.world.setBounds(0, 0, 1920, 1200);
+
+    //  The lands group contains the land and the 2 ledges we can jump on
+    lands = game.add.group();
+
+    //  We will enable physics for any object that is created in this group
+    lands.enableBody = true;
+
+    // Here we create the land.
+    var land = lands.create(0, game.world.height - 32, 'ground');
+
+    //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
+    land.scale.setTo(1, 1);
+
+    //  This stops it from falling away when you jump on it
+    land.body.immovable = true;
+
+    //  Now let's create two ledges
+    var ledge = lands.create(500, 1050, 'land');
+    ledge.body.immovable = true;
+    ledge = lands.create(-150, 1000, 'land');
+    ledge.body.immovable = true;
+    ledge = lands.create(1000, 1000, 'land');
+    ledge.body.immovable = true;
+    ledge = lands.create(1400, 800, 'land');
+    ledge.body.immovable = true;
+
+    // The player and its settings
+    // player = game.add.sprite(32, game.world.height - 100, 'protagonist');
+
+    //  We need to enable physics on the player
+    // game.physics.arcade.enable(player);
+
+    //  Player physics properties. Give the little guy a slight bounce.
+    // player.body.bounce.y = 0.2;
+    // player.body.gravity.y = 1000;
+    // player.body.collideWorldBounds = true;
+
+    //  Our two animations, walking left and right.
+    // player.animations.add('left', [0, 1, 2, 3], 10, true);
+    // player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+    //  Finally some diamonds to collect
+    diamonds = game.add.group();
+
+    //  We will enable physics for any diamond that is created in this group
+    diamonds.enableBody = true;
+
+    //  Here we'll create 12 of them evenly spaced apart
+    for (var i = 0; i < 50; i++)
+    {
+        //  Create a diamond inside of the 'diamonds' group
+        var diamond = diamonds.create(i * 70, 0, 'diamond');
+
+        //  Let gravity do its thing
+        diamond.body.gravity.y = 300;
+
+        //  This just gives each diamond a slightly random bounce value
+        diamond.body.bounce.y = 0.1 + Math.random() * 0.2;
+    }
+
+
+    //  Our controls.
+    // cursors = game.input.keyboard.createCursorKeys();
+
+    // game.camera.follow(player);
+    // player.body.setSize(20, 55, 22, 10);
+    jump = game.add.audio('jump');
+    pickup = game.add.audio('pickup');
+    theme = game.add.audio('theme');
+    theme.loop = true;
+    theme.volume = 0.020;
+    theme.play();
+
+
+
+
+
+
+
+
+
+  
+
+
+
 
 
 
@@ -105,32 +263,36 @@ var b = -500
    g.body.immovable = true;
    m.body.immovable = true;
    l.body.immovable = true;
+   k.body.immovable = true;
    var ledge = platforms.create(400, 400, 'ground')
    ledge.body.immovable = true;
    ledge = platforms.create(-150,250, 'ground');
    ledge.body.immovable = true;
    
    player = game.add.sprite(32, game.world.height - 150, 'thebad')
-   
-   enemy = game.add.sprite(50, game.world.height - 250, 'dude')
-   
+   balloon = game.add.sprite(2000, game.world.height - 220, 'balloon')
+   enemy = game.add.sprite(600, game.world.height - 250, 'dude')
+   balloon.scale.setTo(3,3)
    player.scale.setTo(2,2)
+   enemy.scale.setTo(2,2)
    game.camera.follow(player);
    game.physics.arcade.enable(player);
    game.physics.arcade.enable(blocks);
    game.physics.arcade.enable(enemy);
+   game.physics.arcade.enable(balloon)
    enemy.body.bounce.y = 0.2
    enemy.body.gravity.y = 300
    enemy.animations.add('left', [0,1,2])
    enemy.animations.add('right',[4,5,6])
    player.body.bounce.y = 0;
-   player.body.gravity.y = 700;
+   player.body.gravity.y = 1000;
    player.body.colliderWorldBounds = true;
    
-   player.animations.add('left', [0,1,2,3,4], 10, true);
-   player.animations.add('right', [6,7,8,9,10],10, true);
-   
-
+   player.animations.add('left', [1,2,3,4], 10, true);
+   player.animations.add('right', [6,7,8,9],10, true);
+    
+   player.animations.add('shoot', [10],10,true)
+   player.animations.add('shoot_left',[0],10,true)
    enemy.body.x = 100
    cursors = game.input.keyboard.createCursorKeys();
    stars = game.add.group();
@@ -141,14 +303,17 @@ var b = -500
   
   })
   
-bullet = game.add.sprite(-100, -100 , 'bullet')
-
+bullet = game.add.sprite(-1000, -100 , 'bullet')
+bullet2 = game.add.sprite(-100, -100 , 'bullet')
       bullets = game.add.group();
     bullet.enableBody = true;
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
     this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     game.physics.arcade.enable(bullet);
-
+    game.physics.arcade.enable(bullet2)
+    bullet.scale.setTo(2,2)
+    bullet2.scale.setTo(2,2)
+    this.sKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN)
 
 
 
@@ -163,29 +328,108 @@ bullet = game.add.sprite(-100, -100 , 'bullet')
    }
 
    
-   scoreText = game.add.text(16,16, 'score: 0', {
-    fontSize: '32px', fill: '#000'});
-   
+
 
 
 }
 
+
+//  function updateCounter() {
+//     // alert("no")
+
+    
+
+// }
+
+
+
+
+
 function update() {
+  
+     game.physics.arcade.collide(player, lands);
+    game.physics.arcade.collide(diamonds, lands);
+
+    //  Checks to see if the player overlaps with any of the diamonds, if he does call the collectdiamond function
+    game.physics.arcade.overlap(player, diamonds, collectDiamond, null, this);
+
+
+
+
+
+
+
+
+
+
+
+  console.log(player.animations.frame)
+  console.log("frame")
+ player.body.gravity.y = 600
+ player.scale.setTo(2,2)
+  
+
+  var random = Math.floor((Math.random() * 100) + 1);
    
+
+   var code = 7 
+  
+ 
+  if(random == code) {
+
+    fire2();
+    // enemy
+}
+// enemy.body.velocity.y = 10
+enemies.forEach(function(c) {
+
+  c.body.velocity.x += 5 
+  c.body.gravity.y = 100
+  c.body.velocity.y -= 1
+}); 
+
+console.log(player.body.x)
+console.log("break")
+
+
+  console.log(player.animations.frame) 
+ // player.animations.frame = 5;
  if (this.spaceKey.isDown)
     {
         
+        if(turn == 'left') {
+
+          player.animations.play('shoot_left')
+          fire();
+        }
+
+        else {
+
+        player.animations.play('shoot');
         fire();
         console.log("fire")
+      }
 
     }   
 
+if(this.sKey.isDown)
+{
 
+ console.log("s");
 
+player.animations.play('right');
+fire2();
+player.scale.setTo(0.3,1)
 
-player.animations.play();
+}
 
-player.animations.frame = 9
+if(player.body.x > 3035) {
+
+m.body.velocity.y -= 5
+alert("high")
+}
+console.log(m.body.y)
+console.log("high")
 
 console.log(player.animations.frame);
 
@@ -206,15 +450,50 @@ if(enemy.body.x <= 49){
 
 
 console.log(enemy.body.x)
-if(enemy.body.x <= 500 && count == 0)
 
-enemy.body.velocity.x = 400
+// if(  player.body.x < enemy.body.x ) {
+
+
+// console.log("howhigh" + enemy.body.gravity.y)
+ 
+// }
+
+
+ if(enemy.body.x <= player.body.x + 100){
+
+enemy.body.velocity.x = 100
+
+lands.forEach(function(c){
+
+
+if (enemy.body.x > c.body.x && enemy.body.x < c.body.x + 450)
+  enemy.body.velocity.y = -50;
+
+
+});
+
+
+}
+else if (enemy.body.x >= player.body.x - 100)
+
+{
+
+  enemy.body.velocity.x = -100
+  console.log(enemy.body.x)
+}
 
 else {
 
-  enemy.body.velocity.x = - 400
-  console.log(enemy.body.x)
+  enemy.body.velocity.x = 0
 }
+
+
+var z = 0
+
+
+ 
+
+
 
 
 
@@ -225,12 +504,190 @@ else {
 // }
 
 
-if(bullet.alive) {
-  console.log("yes")
-}
-else {
-  console.log("no")
-}
+// if(bullet.alive) {
+//   console.log("yes")
+// }
+// else {
+//   console.log("no")
+// }
+
+
+
+
+
+
+// var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+// function preload() {
+//     game.load.image('background', 'assets/background.png');
+//     game.load.image('land', 'assets/land.png');
+//     game.load.image('ground', 'assets/ground.png');
+//     game.load.image('diamond', 'assets/diamond.png');
+//     game.load.spritesheet('protagonist', 'assets/protagonist.png', 64, 64);
+//     game.load.audio('jump', 'audio/jump.mp3');
+//     game.load.audio('pickup', 'audio/pickup.mp3');
+//     game.load.audio('theme', 'audio/theme.mp3');
+
+// }
+
+// var player;
+// var jump;
+// var pickup;
+// var lands;
+// var cursors;
+// var theme;
+
+// var diamonds;
+// var score = 0;
+// var scoreText;
+
+// function create() {
+//     //  We're going to be using physics, so enable the Arcade Physics system
+//     game.physics.startSystem(Phaser.Physics.ARCADE);
+//     //  The score
+//     scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+//     //  A simple backland for our game
+//     // game.add.sprite(0, 0, 1920, 1200, 'sky');
+//     game.add.tileSprite(0, 0, 1920, 1200, 'background');
+//     game.world.setBounds(0, 0, 1920, 1200);
+
+//     //  The lands group contains the land and the 2 ledges we can jump on
+//     lands = game.add.group();
+
+//     //  We will enable physics for any object that is created in this group
+//     lands.enableBody = true;
+
+//     // Here we create the land.
+//     var land = lands.create(0, game.world.height - 32, 'ground');
+
+//     //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
+//     land.scale.setTo(1, 1);
+
+//     //  This stops it from falling away when you jump on it
+//     land.body.immovable = true;
+
+//     //  Now let's create two ledges
+//     var ledge = lands.create(500, 1050, 'land');
+//     ledge.body.immovable = true;
+//     ledge = lands.create(-150, 1000, 'land');
+//     ledge.body.immovable = true;
+//     ledge = lands.create(1000, 1000, 'land');
+//     ledge.body.immovable = true;
+//     ledge = lands.create(1400, 800, 'land');
+//     ledge.body.immovable = true;
+
+//     // The player and its settings
+//     // player = game.add.sprite(32, game.world.height - 100, 'protagonist');
+
+//     //  We need to enable physics on the player
+//     // game.physics.arcade.enable(player);
+
+//     //  Player physics properties. Give the little guy a slight bounce.
+//     // player.body.bounce.y = 0.2;
+//     // player.body.gravity.y = 1000;
+//     // player.body.collideWorldBounds = true;
+
+//     //  Our two animations, walking left and right.
+//     // player.animations.add('left', [0, 1, 2, 3], 10, true);
+//     // player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+//     //  Finally some diamonds to collect
+//     diamonds = game.add.group();
+
+//     //  We will enable physics for any diamond that is created in this group
+//     diamonds.enableBody = true;
+
+//     //  Here we'll create 12 of them evenly spaced apart
+//     for (var i = 0; i < 50; i++)
+//     {
+//         //  Create a diamond inside of the 'diamonds' group
+//         var diamond = diamonds.create(i * 70, 0, 'diamond');
+
+//         //  Let gravity do its thing
+//         diamond.body.gravity.y = 300;
+
+//         //  This just gives each diamond a slightly random bounce value
+//         diamond.body.bounce.y = 0.1 + Math.random() * 0.2;
+//     }
+
+
+//     //  Our controls.
+//     // cursors = game.input.keyboard.createCursorKeys();
+
+//     // game.camera.follow(player);
+//     player.body.setSize(20, 55, 22, 10);
+//     jump = game.add.audio('jump');
+//     pickup = game.add.audio('pickup');
+//     theme = game.add.audio('theme');
+//     theme.loop = true;
+//     theme.volume = 0.020;
+//     theme.play();
+
+// }
+
+// // function update() {
+//     // game.debug.body(player);
+//     //  Collide the player and the diamonds with the lands
+//     game.physics.arcade.collide(player, lands);
+//     game.physics.arcade.collide(diamonds, lands);
+
+//     //  Checks to see if the player overlaps with any of the diamonds, if he does call the collectdiamond function
+//     game.physics.arcade.overlap(player, diamonds, collectDiamond, null, this);
+
+    //  Reset the players velocity (movement)
+//     player.body.velocity.x = 0;
+
+//     if (cursors.left.isDown)
+//     {
+//         //  Move to the left
+//         player.body.velocity.x = -350;
+//         player.animations.play('left');
+//     }
+//     else if (cursors.right.isDown)
+//     {
+//         //  Move to the right
+//         player.body.velocity.x = 350;
+//         player.animations.play('right');
+
+//     }
+//     else
+//     {
+//         //  Stand still
+//         player.animations.stop();
+//         player.frame = 4;
+//     }
+
+//     //  Allow the player to jump if they are touching the land.
+//     if (cursors.up.isDown && player.body.touching.down)
+//     {
+//         player.body.velocity.y = -650;
+//         jump.volume = 0.040;
+//         jump.play();
+//     }
+
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -285,9 +742,9 @@ else {
    game.physics.arcade.collide(blocks, platforms);
    // game.physics.arcade.collide(blocks, platforms);
    
-   
+   game.physics.arcade.collide(enemies, platforms)
    // blocks.forEach(function(c){
-
+   game.physics.arcade.collide(enemy, lands)
 
 
    //  game.physics.arcade.collide(c, platforms)
@@ -296,7 +753,7 @@ else {
    // });
 
 
-   player.animations.play('jump')
+   // player.animations.play('jump')
 
 
 
@@ -311,105 +768,214 @@ else {
 
 
 
-
-
+game.physics.arcade.overlap(enemy,g, enemyJump, null,this)
+game.physics.arcade.overlap(player,balloon,gravityZero, null,this )
    game.physics.arcade.overlap(player, stars, collectStar, null,this);
  game.physics.arcade.collide(player,platforms);
  // game.physic.arcade.collide(blocks, player);
+game.physics.arcade.overlap(player,enemies, killEnemies, null,this)
 
 game.physics.arcade.overlap(bullet, enemy, killEnemy, null, this)
+game.physics.arcade.overlap(bullet2, player, killPlayer, null, this)
 player.body.velocity.x = 0;
 game.physics.arcade.collide(enemy,platforms);
-game.physics.arcade.overlap(player, enemy, destroy, null, this)
+// game.physics.arcade.overlap(player, enemy, destroy, null, this)
 
-enemy.animations.play()
+// enemy.animations.play()
 
-if(cursors.left.isDown)
+
+
+
+if(bullet.body.x >= enemy.body.x - 500 && bullet.body.x < enemy.body.x && turn != 'left' &&
+enemy.body.touching.down ||
+  bullet.body.x <= enemy.body.x + 500 && bullet.body.x > enemy.body.x && turn == 'left' &&
+  enemy.body.touching.down){
+  console.log("posion" + enemy.body.y)
+  enemy.body.velocity.y -= 300
+
+}
+
+if(enemy.body.y < 1900){
+  enemy.body.velocity.y += 10
+}
+
+ if(cursors.up.isDown && player.body.touching.down && cursors.right.isDown){
+
+    player.body.velocity.x = 1000
+    player.body.velocity.y = -550
+
+}
+
+
+else if(cursors.left.isDown)
 {
-    player.body.velocity.x = -1500;
+    
+    player.body.velocity.x = -350;
 
     player.animations.play('left');
+    turn = "left"
 }
 
-else if (cursors.right.isDown)
+else if (cursors.right.isDown )
 {
 
-player.body.velocity.x = 1500;
+player.body.velocity.x = 350;
 
-player.animations.play('right');
+player.animations.play('right')
+turn = "right"
+
+
 
 }
+
+
+else if(cursors.up.isDown && player.body.touching.down )
+
+{
+
+    player.body.velocity.y = -650;
+
+}
+
 
 
 else {
 
     player.animations.stop()
 
-    player.frame = 4;
-}
-
-if(cursors.up.isDown && player.body.touching.down && cursors.right.isDown){
-
-    player.body.velocity.x = 1000
-    player.body.velocity.y = -350
-
+    
 }
 
 
 
-if(cursors.up.isDown && player.body.touching.down )
+if(enemy.body.position.y < -300) {
 
-{
-
-    player.body.velocity.y = -450;
+  enemy.body.velocity.y += 100
 }
-
-
-
+}
 
 function collectStar (player, star) {
 
     star.kill();
     score += 10;
-    scoreText.text = 'Score: ' + score;
+    // scoreText.text = 'Score: ' + score;
 
 
 }
+
+function killEnemies() {
+
+  console.log("killed")
+  enemy1.kill();
+}
+
 
 
 function killEnemy(bullet, enemy){
 
   enemy.kill();
+  bullet2.kill();
   bullet.body.position.y = 1000
    
+}
+function enemyJump() {
+  console.log("jump")
+  enemy.body.velocity.y -= 100;
+}
+
+function killPlayer(bullet, player){
+  health = health - 1;
+    
+  if (health <= 0) {
+  player.kill();
+  bullet2.kill();
+}
+
+}
+
+function gravityZero(){
+
+  player.body.gravity.y = 0
+  player.body.velocity.y -= 5
+  balloon.body.y = player.body.y - 60
+  balloon.body.x = player.body.x
 }
 
 
 
 
+// var i = 0;
+// function destroy(player, enemy){
+//  i++;
+//  if(i > 5) {
+//   enemy.kill();
 
-var i = 0;
-function destroy(player, enemy){
- i++;
- if(i > 5) {
-  enemy.kill();
-
-        }
-    }
-}//end update function
+//         }
+//     }
+// }//end update function
 function fire() {
 
     // var bullet = bullets.getFirstDead();
     // bullet.reset(player.x - 8, player.y - 8);
-    bullet.body.x  = player.body.x
+    bullet.body.x  = player.body.x + 17
     bullet.body.y = player.body.y
-    bullet.body.velocity.x += 500;
+    
+    if(turn == 'left'){
+      bullet.body.velocity.x = -500;
+    }
+    else{
+      bullet.body.velocity.x = 500;}
+}
+function fire2() {
+
+    // var bullet = bullets.getFirstDead();
+    // bullet.reset(player.x - 8, player.y - 8);
+    bullet2.body.x  = enemy.body.x
+    bullet2.body.y = enemy.body.y + 50
+    
+    if(player.body.x < enemy.body.x){
+
+    bullet2.body.velocity.x = -500;}
+
+    else {
+
+      bullet2.body.velocity.x = 500  
+    }
+
 }
 
 
 
- 
-     // some code
+function collectDiamond (player, diamond) {
+
+    // Removes the diamond from the screen
+    diamond.kill();
+    pickup.volume = 0.040;
+    pickup.play();
+
+    //  Add and update the score
+    score += 10;
+    // scoreText.text = 'score: ' + score;
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
